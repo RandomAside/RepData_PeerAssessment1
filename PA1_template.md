@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: yes
----
+# Reproducible Research: Peer Assessment 1
 
 ## Loading and preprocessing the data
 
@@ -11,9 +6,23 @@ I used lubridate to handle the conversion of the time series, so it needs to be
 loaded....also set the scipen option to prevent KnitR converting numbers to 
 scientific notation.
 
-```{r}
-library(lubridate)
 
+```r
+library(lubridate)
+```
+
+```
+## 
+## Attaching package: 'lubridate'
+```
+
+```
+## The following object is masked from 'package:base':
+## 
+##     date
+```
+
+```r
 options(scipen=999)
 ```
 
@@ -21,7 +30,8 @@ Now we check to see if the activity file is already in the directory. If it isn'
 then we go to the website, download it, unzip it then tidy-up by removing the
 zipped file.
 
-```{r}
+
+```r
 zipFileDownloadLocation = "https://d396qusza40orc.cloudfront.net/"
 zippedFile = "repdata%2Fdata%2Factivity.zip"
 File <- "activity.csv"
@@ -40,7 +50,8 @@ if(all(File %in% dir()) == FALSE) {
 
 Now we I read in the data...
 
-```{r}
+
+```r
 Data <- read.table(File, stringsAsFactors = FALSE, header = TRUE, sep = "," , 
                 na.strings = "NA",colClasses = c("numeric","Date","numeric"))
 ```
@@ -50,7 +61,8 @@ Data <- read.table(File, stringsAsFactors = FALSE, header = TRUE, sep = "," ,
 To find the answer to this question we split up the steps (removing NAs) by date
 and summate.
 
-```{r}
+
+```r
 daysSteps <- sapply(split(Data$steps,Data$date),sum, na.rm=TRUE)
 ```
 
@@ -58,8 +70,8 @@ Plotting this data as a histogram of the date vs. the number of step. Note this
 data could also be plotted as a frequency histogram for the number of steps
 using hist().
 
-```{r}
 
+```r
 par(yaxs ="i", mfrow=c(1,1))
 plot(ymd(names(daysSteps)),daysSteps, type = 'h',
         xlab = "Date",
@@ -70,34 +82,48 @@ plot(ymd(names(daysSteps)),daysSteps, type = 'h',
         ylim = c(0,max(daysSteps)))
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
 Next I calculated the median an mean for the data set with missing data.
 
 
-```{r}
+
+```r
 Q1Median <-median(daysSteps)
 
 Q1Median
+```
 
+```
+## [1] 10395
+```
+
+```r
 Q1Mean <-round(mean(daysSteps),2)
 
 Q1Mean
-
 ```
 
-The median is `r Q1Median` and the mean is `r Q1Mean`
+```
+## [1] 9354.23
+```
+
+The median is 10395 and the mean is 9354.23
 
 ## What is the average daily activity pattern?
 
 To create a time series plot we split the steps by interval, removing NAs and
 find the mean for each interval across the 61 days in the data.
 
-```{r}
+
+```r
 aveStepsPerInterval <- sapply(split(Data$steps,Data$interval),mean, na.rm=TRUE)
 ```
 
 
 Plotting this as a time series 
-```{r}
+
+```r
 par(mfrow=c(1,1))
 plot(names(aveStepsPerInterval),aveStepsPerInterval, type = 'l',
         xlab = "Interval",
@@ -107,25 +133,38 @@ plot(names(aveStepsPerInterval),aveStepsPerInterval, type = 'l',
         col= "dark blue")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+
 To show which one interval has the number of sets we can subset the time series
 data to only include the rows with the maximum value.
-```{r}
+
+```r
 MaxInterval <-subset(aveStepsPerInterval, aveStepsPerInterval==max(aveStepsPerInterval))
 MaxInterval
 ```
 
-This shows the interval `r names(MaxInterval)` has the maximum value of `r unname(MaxInterval)`
+```
+##      835 
+## 206.1698
+```
+
+This shows the interval 835 has the maximum value of 206.1698113
 
 ## Imputing missing values
 
 Summing up the NAs to find the number of NAs in the data
 
-```{r}
+
+```r
 missingSteps <-sum(is.na(Data$steps))
 missingSteps
 ```
 
-Gives `r missingSteps` NAs
+```
+## [1] 2304
+```
+
+Gives 2304 NAs
 
 To create the imputed data we recycle the averageStepsPerInverval along the Data 
 for each of the 61 days. 
@@ -136,7 +175,8 @@ newSteps Column where there is an NA or the original steps value in to the
 newSteps column where it isn't an NA. This is then subset into a 'newData' 
 dataframe and the column names updated in this new frame. 
 
-```{r}
+
+```r
 Data$imputedSteps <-aveStepsPerInterval
 
 Data$newSteps <-NULL
@@ -151,13 +191,23 @@ newData <- subset(Data, select = c(newSteps,date,interval))
 colnames(newData)[1] <-"steps"
 
 head(newData)
+```
 
+```
+##       steps       date interval
+## 1 1.7169811 2012-10-01        0
+## 2 0.3396226 2012-10-01        5
+## 3 0.1320755 2012-10-01       10
+## 4 0.1509434 2012-10-01       15
+## 5 0.0754717 2012-10-01       20
+## 6 2.0943396 2012-10-01       25
 ```
 
 
 Applying the same technique from part 1 above with the imputed data...
 
-```{r}
+
+```r
 newdaysSteps <- sapply(split(newData$steps,Data$date),sum, na.rm=TRUE)
 
 par(yaxs ="i")
@@ -168,19 +218,33 @@ plot(ymd(names(newdaysSteps)),newdaysSteps, type = 'h',
         lwd = 2,
         col= "dark blue",
         ylim = c(0,max(daysSteps)))
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+
+```r
 imputedMedian <- round(median(newdaysSteps),2)
 imputedMedian
+```
 
+```
+## [1] 10766.19
+```
+
+```r
 imputedMean <- round(mean(newdaysSteps),2)
 imputedMean
 ```
 
-We get the new median of `r imputedMedian` which has increased vs. the original 
-median of `r Q1Median`. 
+```
+## [1] 10766.19
+```
 
-The new mean with the imputed data of `r imputedMean` has also increased vs.
-the original mean of `r Q1Mean`.
+We get the new median of 10766.19 which has increased vs. the original 
+median of 10395. 
+
+The new mean with the imputed data of 10766.19 has also increased vs.
+the original mean of 9354.23.
 
 The most obvious sign of the differences is in the first day where there were no
 steps in the data with NAs but around 10,000 steps in the imputed version (in
@@ -192,7 +256,8 @@ To work this out we create a new column to put the type of day (weekday or weeke
 into and then loop though the days to work out which type they are. Finally I 
 convert the column to a factor.
 
-```{r}
+
+```r
 newData$dayType <-NULL
 p = 1
 for(i in seq_along(newData$steps)) {
@@ -213,7 +278,8 @@ Looking at the plots the person appears to be more active during the day at
 weekends....
 
 
-```{r}
+
+```r
 Weekday <- subset(newData, newData$dayType=="Weekday")
 AveWeekday <- sapply(split(Weekday$steps,Weekday$interval),mean, na.rm=TRUE)
 
@@ -234,6 +300,7 @@ plot(names(AveWeekend),AveWeekend, type = 'l',
         main = "Weekends",
         lwd = 1,
         col= "dark green")
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 
