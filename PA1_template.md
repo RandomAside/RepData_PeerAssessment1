@@ -1,4 +1,9 @@
-# Reproducible Research: Peer Assessment 1
+---
+title: "Reproducible Research: Peer Assessment 1"
+output: 
+  html_document:
+    keep_md: yes
+---
 
 ## Loading and preprocessing the data
 
@@ -9,20 +14,7 @@ scientific notation.
 
 ```r
 library(lubridate)
-```
 
-```
-## 
-## Attaching package: 'lubridate'
-```
-
-```
-## The following object is masked from 'package:base':
-## 
-##     date
-```
-
-```r
 options(scipen=999)
 ```
 
@@ -82,7 +74,7 @@ plot(ymd(names(daysSteps)),daysSteps, type = 'h',
         ylim = c(0,max(daysSteps)))
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png)
 
 Next I calculated the median an mean for the data set with missing data.
 
@@ -133,7 +125,7 @@ plot(names(aveStepsPerInterval),aveStepsPerInterval, type = 'l',
         col= "dark blue")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png)
 
 To show which one interval has the number of sets we can subset the time series
 data to only include the rows with the maximum value.
@@ -220,7 +212,7 @@ plot(ymd(names(newdaysSteps)),newdaysSteps, type = 'h',
         ylim = c(0,max(daysSteps)))
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png)
 
 ```r
 imputedMedian <- round(median(newdaysSteps),2)
@@ -302,5 +294,5 @@ plot(names(AveWeekend),AveWeekend, type = 'l',
         col= "dark green")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png)
 
